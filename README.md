@@ -1,6 +1,8 @@
 # swift-leetcode-playground
 
-A description of this package.
+Generate LeetCode question skeletons for easy solving, tracking, and testing.
+
+## TODO
 
 - [ ] - Non-basic problems
 - [ ] - Testing
