@@ -1,0 +1,958 @@
+openapi: 3.0.0
+info:
+  description: Leetcode API implementation.
+  version: 1.0.1-1
+  title: Leetcode API
+  contact:
+    name: Pavel Safronov
+    email: pv.safronov@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+components:
+  securitySchemes:
+    cookieSession:
+      type: apiKey
+      in: cookie
+      name: LEETCODE_SESSION
+    cookieCSRF:
+      type: apiKey
+      in: cookie
+      name: csrftoken
+    headerCSRF:
+      type: apiKey
+      in: header
+      name: x-csrftoken
+    referer:
+      type: apiKey
+      in: header
+      name: Referer
+  schemas:
+    BaseSubmissionResult:
+      required:
+        - elapsed_time
+        - lang
+        - memory
+        - pretty_lang
+        - run_success
+        - state
+        - status_code
+        - status_msg
+        - status_runtime
+        - submission_id
+        - task_finish_time
+      properties:
+        code_output:
+          example: ['stdout example', '']
+          type: array
+          nullable: true
+          items:
+            type: string
+        elapsed_time:
+          example: 19
+          type: integer
+        full_runtime_error:
+          example: 'SyntaxError: invalid syntax\n'
+          type: string
+          nullable: true
+        lang:
+          example: 'python'
+          type: string
+        memory:
+          example: 6996000
+          type: integer
+        memory_percentile:
+          type: number
+          nullable: true
+        pretty_lang:
+          example: 'Python'
+          type: string
+        run_success:
+          example: false
+          type: boolean
+        runtime_error:
+          example: 'Line 5: SyntaxError: invalid syntax'
+          type: string
+          nullable: true
+        runtime_percentile:
+          type: number
+          nullable: true
+        state:
+          enum: ['SUCCESS']
+          type: string
+        status_code:
+          enum: [10, 11, 15]
+          type: integer
+        status_memory:
+          example: '13.1 MB'
+          type: string
+          nullable: true
+        status_msg:
+          example: 'Runtime Error'
+          type: string
+        status_runtime:
+          example: '36 ms'
+          type: string
+        submission_id:
+          example: 'runcode_1627219627.5662382_EI7iasnhLm'
+          type: string
+        task_finish_time:
+          example: 1627219627690
+          type: integer
+        total_correct:
+          type: integer
+          example: 1
+          nullable: true
+        total_testcases:
+          type: integer
+          example: 52
+          nullable: true
+        question_id:
+          example: 1
+          type: integer
+    TestSubmissionResult:
+      allOf:
+        - $ref: "#/components/schemas/BaseSubmissionResult"
+        - type: object
+          required:
+            - code_answer
+            - code_output
+          properties:
+            code_answer:
+              example: ['[1]']
+              type: array
+              items:
+                type: string
+            correct_answer:
+              type: boolean
+              nullable: true
+            expected_status_code:
+              enum: [10, 11, 15]
+              type: integer
+              nullable: true
+            expected_lang:
+              example: 'python'
+              type: string
+              nullable: true
+            expected_run_success:
+              type: boolean
+              nullable: true
+            expected_status_runtime:
+              example: "4"
+              type: string
+              nullable: true
+            expected_memory:
+              example: 17
+              type: integer
+              nullable: true
+            expected_code_answer:
+              example: ['[0,1]']
+              type: array
+              nullable: true
+              items:
+                type: string
+            expected_code_output:
+              example: []
+              type: array
+              nullable: true
+              items:
+                type: string
+            expected_elapsed_time:
+              example: 17
+              nullable: true
+              type: integer
+            expected_task_finish_time:
+              example: 1627224209392
+              type: integer
+              nullable: true
+    SubmissionResult:
+      allOf:
+        - $ref: "#/components/schemas/BaseSubmissionResult"
+        - type: object
+          required:
+            - question_id
+            - compare_result
+            - std_output
+            - last_testcase
+            - expected_output
+            - total_correct
+            - total_testcases
+            - input_formatted
+            - input
+          properties:
+            compare_result:
+              example: "000000000000000000000000000000000000000000000000000000"
+              type: string
+            std_output:
+              type: string
+              example: "stdout example\n"
+            last_testcase:
+              type: string
+              example: "[2,7,11,15]\n9"
+            expected_output:
+              type: string
+              example: "[0,1]"
+            input_formatted:
+              type: string
+              example: "[2,7,11,15], 9"
+            input:
+              type: string
+              example: "[2,7,11,15]\n9"
+    TestSubmission:
+      required:
+        - data_input
+        - lang
+        - question_id
+        - test_mode
+        - typed_code
+      properties:
+        data_input:
+          type: string
+        lang:
+          example: 'python'
+          type: string
+        question_id:
+          example: 1
+          type: integer
+        test_mode:
+          enum: [false]  # TODO: not sure what `true` does
+          type: boolean
+        typed_code:
+          example: 'print(1)'
+          type: string
+    Submission:
+      required:
+        - judge_type
+        - lang
+        - question_id
+        - test_mode
+        - typed_code
+      properties:
+        judge_type:
+          enum: ['large']
+          type: string
+        lang:
+          example: 'python'
+          type: string
+        question_id:
+          example: 1
+          type: integer
+        test_mode:
+          enum: [false]  # TODO: not sure what `true` does
+          type: boolean
+        typed_code:
+          example: 'print(1)'
+          type: string
+    Interpretation:
+      required:
+        - interpret_id
+        - test_case
+      properties:
+        interpret_id:
+          type: string
+        test_case:
+          type: string
+    SubmissionId:
+      required:
+        - submission_id
+      properties:
+        submission_id:
+          type: integer
+    Difficulty:
+      required:
+        - level
+      properties:
+        level:
+          type: integer
+    Stat:
+      required:
+        - question_id
+        - question__title
+        - question__title_slug
+        - question__hide
+        - total_acs
+        - total_submitted
+        - frontend_question_id
+        - is_new_question
+      properties:
+        question_id:
+          type: integer
+        question__article__live:
+          type: boolean
+          nullable: true
+        question__article__slug:
+          type: string
+          nullable: true
+        question__article__has_video_solution:
+          type: boolean
+          nullable: true
+        question__title:
+          type: string
+        question__title_slug:
+          type: string
+        question__hide:
+          type: boolean
+        total_acs:
+          type: integer
+        total_submitted:
+          type: integer
+        frontend_question_id:
+          type: integer
+        is_new_question:
+          type: boolean
+    StatStatusPair:
+      required:
+        - stat
+        - difficulty
+        - paid_only
+        - is_favor
+        - frequency
+        - progress
+      properties:
+        stat:
+          $ref: '#/components/schemas/Stat'
+        status:
+          type: string
+          nullable: true
+        difficulty:
+          $ref: '#/components/schemas/Difficulty'
+        paid_only:
+          type: boolean
+        is_favor:
+          type: boolean
+        frequency:
+          # Frequency is reported incorrectly. It is always 0.
+          # Provided here just for the reference, but you shouldn't count
+          # on this value.
+          type: number
+          example: 0.0
+        progress:
+          type: number
+    Problems:
+      required:
+        - user_name
+        - num_solved
+        - num_total
+        - ac_easy
+        - ac_medium
+        - ac_hard
+        - stat_status_pairs
+        - frequency_high
+        - frequency_mid
+        - category_slug
+      properties:
+        user_name:
+          type: string
+        num_solved:
+          type: integer
+        num_total:
+          type: integer
+        ac_easy:
+          type: integer
+        ac_medium:
+          type: integer
+        ac_hard:
+          type: integer
+        stat_status_pairs:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatStatusPair'
+        frequency_high:
+          type: integer
+        frequency_mid:
+          type: integer
+        category_slug:
+          type: string
+    GraphqlQueryVariables:
+      properties: {}
+    GraphqlQueryGetQuestionDetailVariables:
+      properties:
+        titleSlug:
+          type: string
+          example: two-sum
+    GraphqlQueryProblemsetQuestionListVariablesFilterInput:
+      properties:
+        tags:
+          type: array
+          nullable: true
+          items:
+            type: string
+            example: "array"
+        difficulty:
+          enum: ["EASY", "MEDIUM", "HARD"]
+          nullable: true
+        status:
+          enum: ["NOT_STARTED", "AC", "TRIED"]
+          nullable: true
+        listId:
+          type: string
+          example: "7p5x763"  # == Top Amazon Questions
+        premiumOnly:
+          type: boolean
+    GraphqlQueryProblemsetQuestionListVariables:
+      properties:
+        categorySlug:
+          type: string
+          example: ""
+        limit:
+          type: integer
+          example: 50
+        skip:
+          type: integer
+          example: 0
+        filters:
+          $ref: '#/components/schemas/GraphqlQueryProblemsetQuestionListVariablesFilterInput'
+    GraphqlQuestionDetail:
+      properties:
+        questionId:
+          type: string
+          nullable: true
+          example: "2159"
+        questionFrontendId:
+          type: string
+          nullable: true
+          example: "2003"
+        boundTopicId:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+          example: "Two Sum"
+        titleSlug:
+          type: string
+          nullable: true
+          example: "two-sum"
+        frequency:
+          # Frequency is reported incorrectly. It is always 0.
+          # Provided here just for the reference, but you shouldn't count
+          # on this value.
+          type: number
+          nullable: true
+          example: 0.0
+        freqBar:
+          type: number
+          nullable: true
+          example: 86.81901768265547
+        content:
+          type: string
+          nullable: true
+          example: '<p>Given an array of integers <code>nums</code>&nbsp;and an integer <code>target</code>, return <em>indices of the two numbers such that they add up to <code>target</code></em>.</p>\n\n<p>You may assume that each input would have <strong><em>exactly</em> one solution</strong>, and you may not use the <em>same</em> element twice.</p>\n\n<p>You can return the answer in any order.</p>\n\n<p>&nbsp;</p>\n<p><strong>Example 1:</strong></p>\n\n<pre>\n<strong>Input:</strong> nums = [2,7,11,15], target = 9\n<strong>Output:</strong> [0,1]\n<strong>Output:</strong> Because nums[0] + nums[1] == 9, we return [0, 1].\n</pre>\n\n<p><strong>Example 2:</strong></p>\n\n<pre>\n<strong>Input:</strong> nums = [3,2,4], target = 6\n<strong>Output:</strong> [1,2]\n</pre>\n\n<p><strong>Example 3:</strong></p>\n\n<pre>\n<strong>Input:</strong> nums = [3,3], target = 6\n<strong>Output:</strong> [0,1]\n</pre>\n\n<p>&nbsp;</p>\n<p><strong>Constraints:</strong></p>\n\n<ul>\n\t<li><code>2 &lt;= nums.length &lt;= 10<sup>4</sup></code></li>\n\t<li><code>-10<sup>9</sup> &lt;= nums[i] &lt;= 10<sup>9</sup></code></li>\n\t<li><code>-10<sup>9</sup> &lt;= target &lt;= 10<sup>9</sup></code></li>\n\t<li><strong>Only one valid answer exists.</strong></li>\n</ul>\n\n<p>&nbsp;</p>\n<strong>Follow-up:&nbsp;</strong>Can you come up with an algorithm that is less than&nbsp;<code>O(n<sup>2</sup>)&nbsp;</code>time complexity?'
+        translatedTitle:
+          type: string
+          nullable: true
+        translatedContent:
+          type: string
+          nullable: true
+        isPaidOnly:
+          type: boolean
+          nullable: true
+        difficulty:
+          enum: ["Easy", "Medium", "Hard"]
+          nullable: true
+        likes:
+          type: integer
+          nullable: true
+        dislikes:
+          type: integer
+          nullable: true
+        isLiked:
+          type: boolean
+          nullable: true
+        isFavor:
+          type: boolean
+          nullable: true
+        similarQuestions:
+          type: string
+          nullable: true
+          example: >
+            [
+              {
+                "title": "Two Sum",
+                "titleSlug": "two-sum",
+                "difficulty": "Easy",
+                "translatedTitle": null
+              },
+              {
+                "title": "3Sum",
+                "titleSlug": "3sum",
+                "difficulty": "Medium",
+                "translatedTitle": null
+              },
+              {
+                "title": "4Sum II",
+                "titleSlug": "4sum-ii",
+                "difficulty": "Medium",
+                "translatedTitle": null
+              },
+              {
+                "title": "Count Special Quadruplets",
+                "titleSlug": "count-special-quadruplets",
+                "difficulty": "Easy",
+                "translatedTitle": null
+              }
+            ]
+        contributors:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/GraphqlQuestionContributor'
+        langToValidPlayground:
+          type: string
+          nullable: true
+          example: '{"cpp": true, "java": true, "python": true}'
+        topicTags:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/GraphqlQuestionTopicTag'
+        companyTagStats:
+          type: string
+          nullable: true
+          example: >
+            {
+              "3": [
+                {
+                  "taggedByAdmin": true,
+                  "name": "Cashfree",
+                  "slug": "cashfree",
+                  "timesEncountered": 0
+                }
+              ],
+              "1": [],
+              "2": []
+            }
+        codeSnippets:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/GraphqlQuestionCodeSnippet'
+        stats:
+          type: string
+          nullable: true
+          example: >
+            {
+              "totalAccepted": "5M",
+              "totalSubmission": "10.5M",
+              "totalAcceptedRaw": 4983120,
+              "totalSubmissionRaw": 10461934,
+              "acRate": "47.6%"
+            }
+        acRate:
+          type: number
+          nullable: true
+          example: 62.202435813962666
+        hints:
+          type: array
+          nullable: true
+          items:
+            type: string
+            example: 'Maintain the frequency of all the points in a hash map.'
+        solution:
+          anyOf:
+            - $ref: '#/components/schemas/GraphqlQuestionSolution'
+          nullable: true
+        hasSolution:
+          type: boolean
+          nullable: true
+        hasVideoSolution:
+          type: boolean
+          nullable: true
+        status:
+          enum: ["ac"]
+          nullable: true
+        sampleTestCase:
+          type: string
+          nullable: true
+          example: >
+            [2,7,11,15]
+            9
+        judgerAvailable:
+          type: boolean
+          nullable: true
+        judgeType:
+          enum: ["small", "large"]
+          nullable: true
+        mysqlSchemas:
+          type: array
+          nullable: true
+          items:
+            type: string
+            example: "Create table If Not Exists Person (PersonId int, FirstName varchar(255), LastName varchar(255))"
+        enableRunCode:
+          type: boolean
+          nullable: true
+        enableTestMode:
+          type: boolean
+          nullable: true
+        envInfo:
+          type: string
+          nullable: true
+          example: >
+            {
+              "cpp": [
+                "C++",
+                "<p>Compiled with <code> clang 11 </code> using the latest C++ 17 standard.</p>\\r\\n\\r\\n<p>Your code is compiled with level two optimization (<code>-O2</code>). <a href='https://github.com/google/sanitizers/wiki/AddressSanitizer' target='_blank'>AddressSanitizer</a> is also enabled to help detect out-of-bounds and use-after-free bugs.</p>\\r\\n\\r\\n<p>Most standard library headers are already included automatically for your convenience.</p>"
+              ],
+              "java": [
+                "Java",
+                "<p><code>Java SE 13</code>.</p>\\r\\n\\r\\n<p>Most standard library headers are already included automatically for your convenience.</p>\\r\\n<p>Includes <code>Pair</code> class from https://docs.oracle.com/javase/8/javafx/api/javafx/util/Pair.html.</p>"
+              ],
+              "python": [
+                "Python",
+                "<p><code>Python 2.7.12</code>.</p>\\r\\n\\r\\n<p>Most libraries are already imported automatically for your convenience, such as <a href='https://docs.python.org/2/library/array.html' target='_blank'>array</a>, <a href='https://docs.python.org/2/library/bisect.html' target='_blank'>bisect</a>, <a href='https://docs.python.org/2/library/collections.html' target='_blank'>collections</a>. If you need more libraries, you can import it yourself.</p>\\r\\n\\r\\n<p>For Map/TreeMap data structure, you may use <a href='http://www.grantjenks.com/docs/sortedcontainers/' target='_blank'>sortedcontainers</a> library.</p>\\r\\n\\r\\n<p>Note that Python 2.7 <a href='https://www.python.org/dev/peps/pep-0373/' target='_blank'>will not be maintained past 2020</a>. For the latest Python, please choose Python3 instead.</p>"
+              ]
+            }
+        metaData:
+          type: string
+          nullable: true
+          example: >
+            {
+              "name": "twoSum",
+              "params": [
+                {
+                  "name": "nums",
+                  "type": "integer[]"
+                },
+                {
+                  "name": "target",
+                  "type": "integer"
+                }
+              ],
+              "return": {
+                "type": "integer[]",
+                "size": 2
+              },
+              "manual": false
+            }
+        codeDefinition:
+          type: string
+          nullable: true
+          example: >
+            [
+              {
+                "value": "cpp",
+                "text": "C++",
+                "defaultCode": "class Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        \n    }\n};"
+              },
+              {
+                "value": "java",
+                "text": "Java",
+                "defaultCode": "class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        \n    }\n}"
+              },
+              {
+                "value": "python",
+                "text": "Python",
+                "defaultCode": "class Solution(object):\n    def twoSum(self, nums, target):\n        \"\"\"\n        :type nums: List[int]\n        :type target: int\n        :rtype: List[int]\n        \"\"\"\n        "
+              },
+            ]
+    GraphqlQuestionContributor:
+      required:
+        - username
+        - profileUrl
+        - avatarUrl
+      properties:
+        username:
+          type: string
+        profileUrl:
+          type: string
+        avatarUrl:
+          type: string
+        __typename:
+          type: string
+          nullable: true
+    GraphqlQuestionTopicTag:
+      required:
+        - name
+        - slug
+      properties:
+        name:
+          type: string
+          example: 'Array'
+        slug:
+          type: string
+          example: 'array'
+        translatedName:
+          type: string
+          nullable: true
+        __typename:
+          enum: ['TopicTagNode']
+          nullable: true
+    GraphqlQuestionCodeSnippet:
+      required:
+        - lang
+        - langSlug
+        - code
+      properties:
+        lang:
+          type: string
+          example: 'C++'
+        langSlug:
+          type: string
+          example: 'cpp'
+        code:
+          type: string
+        __typename:
+          enum: ['CodeSnippetNode']
+          nullable: true
+    GraphqlQuestionSolution:
+      required:
+        - id
+        - canSeeDetail
+        - __typename
+      properties:
+        id:
+          type: string
+          example: "7"
+        canSeeDetail:
+          type: boolean
+        __typename:
+          enum: ['ArticleNode']
+    GraphqlUser:
+      properties:
+        username:
+          type: string
+          nullable: true
+          example: omgitspavel
+        isCurrentUserPremium:
+          type: boolean
+          nullable: true
+    GraphqlProblemsetQuestionList:
+      properties:
+        totalNum:
+          type: integer
+          example: 2046
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/GraphqlQuestionDetail'
+    GraphqlData:
+      properties:
+        question:
+          $ref: '#/components/schemas/GraphqlQuestionDetail'
+          nullable: true
+        user:
+          $ref: '#/components/schemas/GraphqlUser'
+          nullable: true
+        problemsetQuestionList:
+          $ref: '#/components/schemas/GraphqlProblemsetQuestionList'
+          nullable: true
+    GraphqlResponse:
+      required:
+        - data
+      properties:
+        data:
+          $ref: '#/components/schemas/GraphqlData'
+    GraphqlQuery:
+      required:
+        - query
+        - variables
+      properties:
+        query:
+          type: string
+          example: >
+            # operationName = "getQuestionDetail"
+            query getQuestionDetail($titleSlug: String!) {
+              question(titleSlug: $titleSlug) {
+                questionId
+                questionFrontendId
+                boundTopicId
+                title
+                content
+                translatedTitle
+                isPaidOnly
+                difficulty
+                likes
+                dislikes
+                isLiked
+                similarQuestions
+                contributors {
+                  username
+                  profileUrl
+                  avatarUrl
+                  __typename
+                }
+                langToValidPlayground
+                topicTags {
+                  name
+                  slug
+                  translatedName
+                  __typename
+                }
+                companyTagStats
+                codeSnippets {
+                  lang
+                  langSlug
+                  code
+                  __typename
+                }
+                stats
+                codeDefinition
+                hints
+                solution {
+                  id
+                  canSeeDetail
+                  __typename
+                }
+                status
+                sampleTestCase
+                enableRunCode
+                metaData
+                translatedContent
+                judgerAvailable
+                judgeType
+                mysqlSchemas
+                enableTestMode
+                envInfo
+                __typename
+              }
+            }
+            # operationName = None
+            # {
+            #   user {
+            #     username
+            #     isCurrentUserPremium
+            #   }
+            # }
+            # operationName = problemsetQuestionList
+            # query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $filters: QuestionListFilterInput) {
+            #  problemsetQuestionList: questionList(
+            #    categorySlug: $categorySlug
+            #    limit: $limit
+            #    skip: $skip
+            #    filters: $filters
+            #  ) {
+            #    totalNum
+            #    questions: data {
+            #      acRate
+            #      difficulty
+            #      freqBar
+            #      questionFrontendId
+            #      isFavor
+            #      isPaidOnly
+            #      status
+            #      title
+            #      titleSlug
+            #      topicTags {
+            #        name
+            #        id
+            #        slug
+            #      }
+            #      hasSolution
+            #      hasVideoSolution
+            #    }
+            #  }
+            #}
+        variables:
+          anyOf:
+            - $ref: '#/components/schemas/GraphqlQueryVariables'
+            - $ref: '#/components/schemas/GraphqlQueryGetQuestionDetailVariables'
+            - $ref: '#/components/schemas/GraphqlQueryProblemsetQuestionListVariables'
+        operationName:
+          enum: ['getQuestionDetail', 'problemsetQuestionList']
+          nullable: true
+paths:
+  /api/problems/{topic}/:
+    get:
+      parameters:
+        - in: path
+          name: topic
+          required: true
+          schema:
+            enum: ['algorithms', 'database', 'shell', 'concurrency']
+            type: string
+      responses:
+        '200':
+          description: Returns problems by topic
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problems'
+  /problems/{problem}/interpret_solution/:
+    post:
+      parameters:
+        - in: path
+          name: problem
+          required: true
+          schema:
+            type: string
+            example: two-sum
+      requestBody:
+        description: Solution to test
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestSubmission'
+      responses:
+        '200':
+          description: Returns problem test result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Interpretation'
+  /submissions/detail/{id}/check/:
+    get:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Either submission id (int) or interpretation id (string)
+          schema:
+            oneOf:
+              - type: string
+              - type: integer
+            example: two-sum
+      responses:
+        '200':
+          description: Check status of the submitted solution
+          content:
+            application/json:
+              schema:
+                oneOf:  # Have to cast manually in the code. Now way to auto-detect type
+                  - $ref: '#/components/schemas/SubmissionResult'
+                  - $ref: '#/components/schemas/TestSubmissionResult'
+  /problems/{problem}/submit/:
+    post:
+      parameters:
+        - in: path
+          name: problem
+          required: true
+          schema:
+            type: string
+            example: two-sum
+      requestBody:
+        description: Solution to test
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Submission'
+      responses:
+        '200':
+          description: Returns problem test result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmissionId'
+  /graphql:
+    post:
+      requestBody:
+        description: GraphQL query
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GraphqlQuery'
+      responses:
+        '200':
+          description: Returns the result of graphql query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraphqlResponse'
+
+servers:
+  - url: 'https://leetcode.com'
+security:
+  - cookieSession: []
+    cookieCSRF: []
+    headerCSRF: []
+    referer: []
