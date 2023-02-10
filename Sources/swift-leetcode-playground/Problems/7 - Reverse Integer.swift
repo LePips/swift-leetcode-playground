@@ -6,7 +6,18 @@
 //
 
 struct ReverseInteger {
-    func reverse(_ x: Int) -> Int {
+    func input(_ x: Int) -> Int {
 		0
+    }
+}
+
+extension ReverseInteger: Testable {
+
+    var problemTitle: String {
+        "7 - Reverse Integer.swift"
+    }
+
+    func test() {
+
     }
 }

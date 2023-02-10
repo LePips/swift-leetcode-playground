@@ -6,7 +6,18 @@
 //
 
 struct ZigzagConversion {
-    func convert(_ s: String, _ numRows: Int) -> String {
+    func input(_ s: String, _ numRows: Int) -> String {
 		""
+    }
+}
+
+extension ZigzagConversion: Testable {
+
+    var problemTitle: String {
+        "6 - Zigzag Conversion.swift"
+    }
+
+    func test() {
+
     }
 }

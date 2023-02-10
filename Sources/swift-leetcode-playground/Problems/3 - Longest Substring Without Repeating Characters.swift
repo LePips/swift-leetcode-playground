@@ -6,7 +6,18 @@
 //
 
 struct LongestSubstringWithoutRepeatingCharacters {
-    func lengthOfLongestSubstring(_ s: String) -> Int {
+    func input(_ s: String) -> Int {
 		0
+    }
+}
+
+extension LongestSubstringWithoutRepeatingCharacters: Testable {
+
+    var problemTitle: String {
+        "3 - Longest Substring Without Repeating Characters.swift"
+    }
+
+    func test() {
+
     }
 }

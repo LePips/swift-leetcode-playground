@@ -6,7 +6,18 @@
 //
 
 struct StringtoIntegeratoi {
-    func myAtoi(_ s: String) -> Int {
+    func input(_ s: String) -> Int {
 		0
+    }
+}
+
+extension StringtoIntegeratoi: Testable {
+
+    var problemTitle: String {
+        "8 - String to Integer (atoi).swift"
+    }
+
+    func test() {
+
     }
 }

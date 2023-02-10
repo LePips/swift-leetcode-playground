@@ -6,7 +6,18 @@
 //
 
 struct TwoSum {
-    func twoSum(_ nums: [Int], _ target: Int) -> [Int] {
+    func input(_ nums: [Int], _ target: Int) -> [Int] {
 		[]
+    }
+}
+
+extension TwoSum: Testable {
+
+    var problemTitle: String {
+        "1 - Two Sum.swift"
+    }
+
+    func test() {
+
     }
 }

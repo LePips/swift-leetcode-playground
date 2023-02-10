@@ -6,7 +6,18 @@
 //
 
 struct MedianofTwoSortedArrays {
-    func findMedianSortedArrays(_ nums1: [Int], _ nums2: [Int]) -> Double {
+    func input(_ nums1: [Int], _ nums2: [Int]) -> Double {
 		0
+    }
+}
+
+extension MedianofTwoSortedArrays: Testable {
+
+    var problemTitle: String {
+        "4 - Median of Two Sorted Arrays.swift"
+    }
+
+    func test() {
+
     }
 }
