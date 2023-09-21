@@ -22,6 +22,10 @@ func testCase<Expected: Equatable>(expected: Expected, with input: () -> Expecte
     }
 }
 
+func testCase<Expected: Equatable>(expected: Expected, with input: @autoclosure () -> Expected) {
+    testCase(expected: expected, with: { input() })
+}
+
 extension String {
     
     func appending(if condition: Bool, aString: any StringProtocol) -> Self {

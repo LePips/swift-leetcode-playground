@@ -61,7 +61,15 @@ extension GraphqlQuestionCodeSnippet {
     }
 
     func withReturnSolution() -> Self {
-        let splitCode = code.split(separator: "\n")
+        
+        let splitCode: [Substring]
+        
+        if code.contains("\r\n") {
+            splitCode = code.split(separator: "\r\n")
+        } else {
+            splitCode = code.split(separator: "\n")
+        }
+        
         let declarationLine = splitCode[splitCode.count - 4].split(separator: " ")
 
         // some solutions will use an inout parameter instead
@@ -86,7 +94,8 @@ extension GraphqlQuestionCodeSnippet {
             returnValue = "fatalError()"
         }
 
-        var c = code.split(separator: "\n").map { String($0) }
+        var c = splitCode.map(String.init)
+        
         c[c.count - 3] = "\t\t\(returnValue)"
 
         let newCode = c.joined(separator: "\n")

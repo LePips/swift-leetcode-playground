@@ -1,8 +1,8 @@
 import Foundation
 import Get
 
-let skip: Double = 0
-let numberOfProblems: Double = 30
+let skip: Double = 980
+let numberOfProblems: Double = 1
 
 let client = APIClient(baseURL: URL(string: "https://leetcode.com"))
 
@@ -18,7 +18,7 @@ asyncMain {
         let validProblems = allProblems
             .filter { !($0.isPaidOnly ?? true) }
             .filter(\.isSwiftEnabled)
-            .filter(\.isBasicSolution) // TODO: remove when generic function returns are implemented
+//            .filter(\.isBasicSolution) // TODO: remove when generic function returns are implemented
 
         print("Problems: \(validProblems.count)")
 

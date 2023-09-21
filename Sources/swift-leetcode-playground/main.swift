@@ -1,7 +1,7 @@
 
 // MARK: problem
 
-let currentProblem: Testable = PalindromeNumber()
+let currentProblem: Testable = TimeBasedKeyValueStore()
 
 // MARK: time
 
