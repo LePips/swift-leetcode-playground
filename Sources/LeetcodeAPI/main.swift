@@ -1,14 +1,20 @@
 import Foundation
 import Get
 
-let skip: Double = 980
+// problem # = skip + numberOfProblems
+let skip: Double = 1251
 let numberOfProblems: Double = 1
 
 let client = APIClient(baseURL: URL(string: "https://leetcode.com"))
 
 var allProblemsRequest = Paths.graphql.post(.init(
     query: "query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $filters: QuestionListFilterInput) { problemsetQuestionList: questionList( categorySlug: $categorySlug limit: $limit skip: $skip filters: $filters ) { total: totalNum questions: data { acRate content difficulty freqBar questionId questionFrontendId isFavor isPaidOnly status title titleSlug topicTags { name id slug } hasSolution hasVideoSolution codeSnippets { lang langSlug code } } } }",
-    variables: .init(object: ["categorySlug": .string(""), "limit": .number(numberOfProblems), "skip": .number(skip), "filters": .object([:])])
+    variables: .init(object: [
+        "categorySlug": .string(""),
+        "limit": .number(numberOfProblems),
+        "skip": .number(skip),
+        "filters": .object([:]),
+    ])
 ))
 
 asyncMain {
