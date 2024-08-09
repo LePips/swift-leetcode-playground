@@ -2,7 +2,7 @@ import Foundation
 import Get
 
 // problem # = skip + numberOfProblems
-let skip: Double = 1251
+let skip: Double = 839
 let numberOfProblems: Double = 1
 
 let client = APIClient(baseURL: URL(string: "https://leetcode.com"))

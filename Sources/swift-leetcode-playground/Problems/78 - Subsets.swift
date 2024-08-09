@@ -23,7 +23,27 @@ import Foundation
 
 struct Subsets {
     func input(_ nums: [Int]) -> [[Int]] {
-        []
+        var mask = 0 ..< (1 << nums.count)
+
+        var f: [[Int]] = []
+
+        for i in mask {
+            let t: [Int] = nums.indices.reduce([]) {
+                let inSubset = (i & (1 << $1)) != 0
+
+                if inSubset {
+                    var j = $0
+                    j.append(nums[$1])
+                    return j
+                } else {
+                    return $0
+                }
+            }
+            
+            f.append(t)
+        }
+
+        return f
     }
 }
 

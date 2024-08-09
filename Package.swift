@@ -20,9 +20,17 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/kean/Get", from: "1.0.2"),
+        .package(url: "https://github.com/apple/swift-collections", from: "1.1.2"),
+        .package(url: "https://github.com/apple/swift-algorithms", from: "1.2.0")
     ],
     targets: [
-        .executableTarget(name: "swift-leetcode-playground"),
+        .executableTarget(
+            name: "swift-leetcode-playground",
+            dependencies: [
+                .product(name: "Algorithms", package: "swift-algorithms"),
+                .product(name: "OrderedCollections", package: "swift-collections")
+            ]
+        ),
         .executableTarget(
             name: "LeetcodeAPI",
             dependencies: [

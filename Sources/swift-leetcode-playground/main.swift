@@ -1,7 +1,7 @@
 
 // MARK: problem
 
-let currentProblem: Testable = CellswithOddValuesinaMatrix()
+let currentProblem: Testable = MagicSquaresInGrid()
 
 // MARK: time
 
