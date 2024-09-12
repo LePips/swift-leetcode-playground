@@ -1,10 +1,14 @@
 import Foundation
 import Get
 
-// problem # = skip + numberOfProblems
-let skip: Double = 839
-let numberOfProblems: Double = 1
+// MARK: Problem Number ---------
 
+let problemNumber: Double = 417
+
+// ------------------------------
+
+// API problem # = skip + numberOfProblems
+let numberOfProblems: Double = 1
 let client = APIClient(baseURL: URL(string: "https://leetcode.com"))
 
 var allProblemsRequest = Paths.graphql.post(.init(
@@ -12,7 +16,7 @@ var allProblemsRequest = Paths.graphql.post(.init(
     variables: .init(object: [
         "categorySlug": .string(""),
         "limit": .number(numberOfProblems),
-        "skip": .number(skip),
+        "skip": .number(problemNumber - 1),
         "filters": .object([:]),
     ])
 ))
@@ -26,7 +30,7 @@ asyncMain {
             .filter(\.isSwiftEnabled)
 //            .filter(\.isBasicSolution) // TODO: remove when generic function returns are implemented
 
-        print("Problems: \(validProblems.count)")
+        print("Downloading Problems: \(validProblems.count)")
 
         for problem in validProblems {
             print(problem.fileName)

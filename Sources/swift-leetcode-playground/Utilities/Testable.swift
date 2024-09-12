@@ -1,5 +1,8 @@
 import Foundation
 
+// TODO: option set for options
+//       - allow element-wise matching, not sorted
+
 protocol Testable {
     var problemTitle: String { get }
     func test()

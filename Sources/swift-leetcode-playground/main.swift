@@ -1,7 +1,8 @@
+@_exported import HeapModule
 
 // MARK: problem
 
-let currentProblem: Testable = MagicSquaresInGrid()
+let currentProblem: Testable = PacificAtlanticWaterFlow()
 
 // MARK: time
 

@@ -28,7 +28,8 @@ let package = Package(
             name: "swift-leetcode-playground",
             dependencies: [
                 .product(name: "Algorithms", package: "swift-algorithms"),
-                .product(name: "OrderedCollections", package: "swift-collections")
+                .product(name: "OrderedCollections", package: "swift-collections"),
+                .product(name: "HeapModule", package: "swift-collections")
             ]
         ),
         .executableTarget(
